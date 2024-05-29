@@ -18,10 +18,22 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H 52.77.254.186 >> ~/.ssh/known_hosts  
+
+      - name: Test DNS Resolution
+        run: nslookup 52.77.254.186
+
+      - name: Install Ansible
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ansible
+
+      - name: Display Inventory File
+        run: cat inventory_file
 
       - name: Run Ansible Playbook
         env:
           ANSIBLE_HOST_KEY_CHECKING: 'false'
-        run: ansible-playbook -i inventory_file argo.yml
+        run: ansible-playbook -i inventory_file argo.yml  
