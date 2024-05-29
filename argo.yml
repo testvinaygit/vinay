@@ -1,0 +1,6 @@
+---
+- name: Dockerhost
+  hosts: all
+  tasks:
+    - name: create new container
+      shell: docker run -itd --name test -p 80:8888 vinaykumar75/vinay1:vinayimage
